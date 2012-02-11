@@ -4,16 +4,20 @@ original_ruby_strings=$rvm_ruby_strings
 original_ruby_string=$rvm_ruby_string
 
 source "$rvm_scripts_path/base"
+source "$rvm_scripts_path/array"
 
 rvm_monitor_sleep="${rvm_monitor_sleep:-2}"
 
 timestamp()
 {
-  if [[ "Darwin" == "$(uname)" ]] ; then
-    echo $(stat -f "%m" $1)
+  if [[ `stat --version | grep GNU` ]]; then
+    # GNU stat
+    _ts='stat -c %Y'
   else
-    echo $(stat -c "%Y" $1)
+    # other (e.g., darwin)
+    _ts='stat -f %m'
   fi
+  echo $($_ts $1)
 }
 
 push_if_timestamp_changed()
